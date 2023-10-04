@@ -29,10 +29,11 @@ exports.findAll = async (req, res, next) => {
       documents = await contactService.find({});
     }
   } catch (error) {
-    return next;
-    new ApiError(500, "An error occurred while retrieving contacts");
-    return res.send(documents);
+    return next(
+      new ApiError(500, "An error occurred while retrieving contacts")
+    );
   }
+  return res.send(documents);
 };
 
 exports.findOne = async (req, res, next) => {
@@ -83,20 +84,28 @@ exports.delete = async (req, res, next) => {
   }
 };
 
-exports.deletell = async (_req, res, next) => {
+exports.deleteAll = async (_req, res, next) => {
   try {
     const contactService = new ContactService(MongoDB.client);
-    const deletedCount = await contactService.deleteAl1();
+    const deletedCount = await contactService.deleteAll();
     return res.send({
       message: `${deletedCount} contacts were deleted successfully`,
     });
   } catch (error) {
     return next(
-      new Apierror(500, "An error occurred while removing all contacts")
+      new ApiError(500, "An error occurred while removing all contacts")
     );
   }
 };
 
-exports.findAllFavorite = (reg, res) => {
-  res.send({ message: "findAllFavorite handler" });
+exports.findAllFavorite = async (_req, res, next) => {
+  try {
+    const contactService = new ContactService(MongoDB.client);
+    const documents = await contactService.findFavorite();
+    return res.send(documents);
+  } catch (error) {
+    return next(
+      new ApiError(500, "An error occurred while retrieving favorite contacts")
+    );
+  }
 };
